@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.example.bicyclerentalsystem.controller.MainController"
+            stylesheets="@../css/style.css"
+            prefWidth="1000" prefHeight="600"
+            fx:id="mainRoot">
+
+    <top>
+        <ToolBar styleClass="tool-bar">
+            <Button text="Bicycles"
+                    styleClass="button-primary"
+                    onAction="#showBicycles"/>
+
+            <Button text="Rentals"
+                    styleClass="button-primary"
+                    onAction="#showRentals"/>
+
+            <Button text="Overdue"
+                    styleClass="button-danger"
+                    onAction="#showOverdue"/>
+        </ToolBar>
+    </top>
+
+    <center>
+        <StackPane fx:id="contentPane" styleClass="card">
+            <Label text="Welcome to Bicycle Rental System"
+                   styleClass="title-label"/>
+        </StackPane>
+    </center>
+
+</BorderPane>
