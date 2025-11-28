@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.bicyclerentalsystem.controller.BicyclesController">
+
+    <TableView fx:id="bicyclesTable" layoutX="20" layoutY="20" prefHeight="400" prefWidth="700" styleClass="table-view">
+        <columns>
+            <TableColumn fx:id="idColumn" prefWidth="100" text="ID" />
+            <TableColumn fx:id="modelColumn" prefWidth="300" text="Model" />
+            <TableColumn fx:id="typeColumn" prefWidth="300" text="Type" />
+        </columns>
+    </TableView>
+
+    <Label layoutX="20" layoutY="440" styleClass="sub-title" text="Model:" />
+    <TextField fx:id="modelField" layoutX="80" layoutY="435" prefWidth="200" styleClass="text-field" />
+
+    <Label layoutX="300" layoutY="440" styleClass="sub-title" text="Type:" />
+    <TextField fx:id="typeField" layoutX="350" layoutY="435" prefWidth="200" styleClass="text-field" />
+
+    <Button fx:id="addButton" layoutX="580" layoutY="435" styleClass="button-primary" text="Add" />
+    <Button fx:id="editButton" layoutX="650" layoutY="435" styleClass="button-primary" text="Edit" />
+    <Button fx:id="deleteButton" layoutX="720" layoutY="435" styleClass="button-danger" text="Delete" />
+   <BorderPane />
+</AnchorPane>
