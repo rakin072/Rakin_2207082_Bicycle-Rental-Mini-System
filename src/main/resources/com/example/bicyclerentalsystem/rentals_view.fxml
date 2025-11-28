@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane stylesheets="@../css/style.css" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/17.0.12" fx:controller="com.example.bicyclerentalsystem.controller.RentalsController">
+
+    <TableView fx:id="rentalsTable" layoutX="20" layoutY="20" prefHeight="380" prefWidth="750" styleClass="table-view">
+
+        <columns>
+            <TableColumn fx:id="idColumn" prefWidth="60" text="ID" />
+            <TableColumn fx:id="customerColumn" prefWidth="200" text="Customer" />
+            <TableColumn fx:id="bicycleColumn" prefWidth="200" text="Bicycle" />
+            <TableColumn fx:id="rentalDateColumn" prefWidth="140" text="Rental Date" />
+            <TableColumn fx:id="returnDateColumn" prefWidth="140" text="Return Date" />
+        </columns>
+
+    </TableView>
+
+    <Label layoutX="20" layoutY="430" styleClass="sub-title" text="Customer:" />
+    <TextField fx:id="customerField" layoutX="100" layoutY="425" prefWidth="200" styleClass="text-field" />
+
+    <Label layoutX="320" layoutY="430" styleClass="sub-title" text="Bicycle:" />
+    <TextField fx:id="bicycleField" layoutX="380" layoutY="425" prefWidth="200" styleClass="text-field" />
+
+    <Label layoutX="20" layoutY="470" styleClass="sub-title" text="Rent Date:" />
+    <DatePicker fx:id="rentalDatePicker" layoutX="100" layoutY="465" prefWidth="200" />
+
+    <Label layoutX="320" layoutY="470" styleClass="sub-title" text="Return Date:" />
+    <DatePicker fx:id="returnDatePicker" layoutX="400" layoutY="465" prefWidth="200" />
+
+    <Button fx:id="addButton" layoutX="650" layoutY="425" styleClass="button-primary" text="Add" />
+    <Button fx:id="editButton" layoutX="650" layoutY="465" styleClass="button-primary" text="Edit" />
+    <Button fx:id="deleteButton" layoutX="650" layoutY="505" styleClass="button-danger" text="Delete" />
+   <BorderPane prefHeight="200.0" prefWidth="200.0" />
+
+</AnchorPane>
