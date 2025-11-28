@@ -21,3 +21,51 @@ A simple JavaFX desktop application to manage bicycle rentals using SQLite.
 
 ## Database
 See `schema.sql` to create the `bicycles` and `rentals` tables.
+
+Project Structure:
+
+Bicycle-Rental-System
+│
+├── pom.xml ( using Maven)
+│
+└── src
+    └── main
+        ├── java
+        │   └── com
+        │       └── example
+        │           └── bicyclerentalsystem
+        │               │
+        │               ├── Main.java
+        │               │
+        │               ├── controller
+        │               │       ├── MainController.java
+        │               │       ├── BicyclesController.java
+        │               │       ├── RentalsController.java
+        │               │       ├── OverdueController.java
+        │               │       └── LoginController.java   (optional)
+        │               │
+        │               ├── model
+        │               │       ├── Bicycle.java
+        │               │       ├── Rental.java
+        │               │       └── Database.java
+        │               │
+        │               └── util
+        │                       └── ViewLoader.java
+        │
+        └── resources
+            └── com
+                └── example
+                    └── bicyclerentalsystem
+                        │
+                        ├── main_view.fxml
+                        ├── bicycles_view.fxml
+                        ├── rentals_view.fxml
+                        ├── overdue_view.fxml
+                        ├── login_view.fxml
+                        │
+                        ├── css
+                        │     └── style.css
+                        │
+                        └── database
+                              └── bicycle_rental.db   
+
