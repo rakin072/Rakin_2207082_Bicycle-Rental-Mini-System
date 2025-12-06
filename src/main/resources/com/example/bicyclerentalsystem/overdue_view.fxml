@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.bicyclerentalsystem.controller.OverdueController"
+      spacing="20"
+      styleClass="card"
+      stylesheets="@../css/style.css">
+
+    <!-- Correct padding definition -->
+    <padding>
+        <Insets top="25" right="25" bottom="25" left="25"/>
+    </padding>
+
+    <Label text="Overdue Rentals"
+           styleClass="title-label" />
+
+    <TableView fx:id="overdueTable"
+               prefHeight="450"
+               styleClass="table-view">
+
+        <columns>
+            <TableColumn fx:id="colRentalId" text="Rental ID" prefWidth="120"/>
+            <TableColumn fx:id="colCustomer" text="Customer" prefWidth="150"/>
+            <TableColumn fx:id="colBike" text="Bicycle" prefWidth="150"/>
+            <TableColumn fx:id="colDueDate" text="Due Date" prefWidth="150"/>
+            <TableColumn fx:id="colDaysOver" text="Days Overdue" prefWidth="130"/>
+            <TableColumn fx:id="colFee" text="Overdue Fee" prefWidth="130"/>
+        </columns>
+
+    </TableView>
+
+</VBox>
