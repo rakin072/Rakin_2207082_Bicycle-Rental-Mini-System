@@ -24,48 +24,43 @@ See `schema.sql` to create the `bicycles` and `rentals` tables.
 
 Project Structure:
 
-Bicycle-Rental-System
-│
-├── pom.xml ( using Maven)
-│
-└── src
-    └── main
-        ├── java
-        │   └── com
-        │       └── example
-        │           └── bicyclerentalsystem
-        │               │
-        │               ├── Main.java
-        │               │
-        │               ├── controller
-        │               │       ├── MainController.java
-        │               │       ├── BicyclesController.java
-        │               │       ├── RentalsController.java
-        │               │       ├── OverdueController.java
-        │               │       └── LoginController.java   (optional)
-        │               │
-        │               ├── model
-        │               │       ├── Bicycle.java
-        │               │       ├── Rental.java
-        │               │       └── Database.java
-        │               │
-        │               └── util
-        │                       └── ViewLoader.java
-        │
-        └── resources
-            └── com
-                └── example
-                    └── bicyclerentalsystem
-                        │
-                        ├── main_view.fxml
-                        ├── bicycles_view.fxml
-                        ├── rentals_view.fxml
-                        ├── overdue_view.fxml
-                        ├── login_view.fxml
-                        │
-                        ├── css
-                        │     └── style.css
-                        │
-                        └── database
-                              └── bicycle_rental.db   
-
+src/
+└── main/
+    ├── java/
+    │   └── com/example/bicyclerentalsystem/
+    │       ├── Main.java
+    │       ├── App.java
+    │       │
+    │       ├── controller/
+    │       │   ├── LoginController.java
+    │       │   ├── RegisterController.java
+    │       │   ├── DashboardController.java
+    │       │   ├── BicyclesController.java
+    │       │   ├── RentalsController.java
+    │       │   ├── OverdueController.java
+    │       │
+    │       ├── model/
+    │       │   ├── User.java
+    │       │   ├── Bicycle.java
+    │       │   ├── Rental.java
+    │       │   ├── Overdue.java
+    │       │   ├── UserSession.java
+    │       │   ├── DatabaseHelper.java
+    │       │
+    │       └── util/
+    │           └── PasswordUtil.java
+    │
+    └── resources/
+        └── com/example/bicyclerentalsystem/
+            │
+            ├── css/
+            │   └── style.css
+            │
+            ├── login_view.fxml
+            ├── register_view.fxml
+            ├── dashboard_view.fxml
+            ├── bicycles_view.fxml
+            ├── rentals_view.fxml
+            ├── overdue_view.fxml
+            │
+            └── database.db       <-- SQLite DATABASE FILE
