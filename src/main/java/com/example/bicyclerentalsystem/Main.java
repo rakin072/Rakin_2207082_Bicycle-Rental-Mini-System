@@ -1,5 +1,6 @@
 package com.example.bicyclerentalsystem;
 
+import com.example.bicyclerentalsystem.model.DatabaseHelper;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -8,24 +9,28 @@ import javafx.stage.Stage;
 public class Main extends Application {
 
     @Override
-    public void start(Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(
-                "/com/example/bicyclerentalsystem/main_view.fxml"));
+    public void start(Stage stage) {
+        try {
+            // Initialize database
+            DatabaseHelper.initializeDatabase();
 
-        Scene scene = new Scene(loader.load());
+            // Load login screen
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/com/example/bicyclerentalsystem/view/login_view.fxml")
+            );
 
-        scene.getStylesheets().add(getClass()
-                .getResource("/com/example/bicyclerentalsystem/css/style.css")
-                .toExternalForm());
+            Scene scene = new Scene(loader.load());
+            stage.setScene(scene);
+            stage.setTitle("Bicycle Rental System");
+            stage.show();
 
-        stage.setTitle("Bicycle Rental System");
-        stage.setScene(scene);
-        stage.setMinWidth(1100);
-        stage.setMinHeight(700);
-        stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to load Login View!");
+        }
     }
 
     public static void main(String[] args) {
-        launch();
+        launch(args);
     }
 }
