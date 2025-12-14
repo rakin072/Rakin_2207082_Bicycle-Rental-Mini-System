@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.example.bicyclerentalsystem.controller.RegisterController"
+            stylesheets="@../css/style.css"
+            prefWidth="500" prefHeight="650">
+
+    <VBox alignment="CENTER" spacing="25"
+          AnchorPane.leftAnchor="50" AnchorPane.rightAnchor="50"
+          AnchorPane.topAnchor="60" AnchorPane.bottomAnchor="60">
+
+        <!-- Header -->
+        <VBox alignment="CENTER" spacing="8">
+            <Label text="🚴" style="-fx-font-size: 48px;"/>
+            <Label text="Create Account" styleClass="title-label"/>
+            <Label text="Join us to start renting bicycles" 
+                   style="-fx-text-fill: #94a3b8; -fx-font-size: 14px;"/>
+        </VBox>
+
+        <!-- Registration Form -->
+        <VBox spacing="18" prefWidth="380">
+            <VBox spacing="8">
+                <Label text="Username" styleClass="sub-title"/>
+                <TextField fx:id="usernameField" 
+                           promptText="Choose a unique username" 
+                           styleClass="text-field"
+                           prefHeight="50"/>
+            </VBox>
+
+            <VBox spacing="8">
+                <Label text="Password" styleClass="sub-title"/>
+                <PasswordField fx:id="passwordField" 
+                               promptText="Create a strong password" 
+                               styleClass="password-field"
+                               prefHeight="50"/>
+            </VBox>
+
+            <VBox spacing="8">
+                <Label text="Confirm Password" styleClass="sub-title"/>
+                <PasswordField fx:id="confirmPasswordField" 
+                               promptText="Re-enter your password" 
+                               styleClass="password-field"
+                               prefHeight="50"/>
+            </VBox>
+
+            <Button text="✅ Create Account" fx:id="registerButton"
+                    onAction="#handleRegister"
+                    styleClass="button-primary-large"
+                    prefWidth="380"
+                    prefHeight="50"/>
+
+            <Label fx:id="messageLabel" styleClass="label-error" 
+                   alignment="CENTER" prefWidth="380"/>
+        </VBox>
+
+        <!-- Login Link -->
+        <VBox alignment="CENTER" spacing="5">
+            <Label text="Already have an account?" 
+                   style="-fx-text-fill: #94a3b8; -fx-font-size: 13px;"/>
+            <Hyperlink text="Login here" 
+                       onAction="#goToLogin"
+                       style="-fx-font-size: 14px; -fx-font-weight: 600;"/>
+        </VBox>
+    </VBox>
+
+</AnchorPane>
