@@ -47,6 +47,16 @@
                                prefHeight="50"/>
             </VBox>
 
+            <VBox spacing="8">
+                <Label text="Password Hint" styleClass="sub-title"/>
+                <TextField fx:id="hintField" 
+                           promptText="Enter a hint to recover your password" 
+                           styleClass="text-field"
+                           prefHeight="50"/>
+                <Label text="💡 This will help you recover your password if you forget it" 
+                       style="-fx-text-fill: #64748b; -fx-font-size: 11px;"/>
+            </VBox>
+
             <Button text="✅ Create Account" fx:id="registerButton"
                     onAction="#handleRegister"
                     styleClass="button-primary-large"
