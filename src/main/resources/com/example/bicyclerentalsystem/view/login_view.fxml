@@ -33,7 +33,13 @@
             </VBox>
 
             <VBox spacing="8">
-                <Label text="Password" styleClass="sub-title"/>
+                <HBox alignment="CENTER_LEFT">
+                    <Label text="Password" styleClass="sub-title"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Hyperlink text="Forgot Password?" 
+                               onAction="#handleForgotPassword"
+                               style="-fx-font-size: 12px;"/>
+                </HBox>
                 <PasswordField fx:id="passwordField"
                                promptText="Enter your password"
                                styleClass="password-field"

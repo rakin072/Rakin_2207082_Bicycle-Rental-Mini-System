@@ -18,6 +18,25 @@ public class LoginController {
     @FXML private Label messageLabel;
 
     @FXML
+    private void handleForgotPassword() {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                getClass().getResource("/com/example/bicyclerentalsystem/view/forgot_password_view.fxml")
+            );
+            javafx.scene.Parent root = loader.load();
+            
+            javafx.stage.Stage stage = new javafx.stage.Stage();
+            stage.setTitle("Forgot Password");
+            stage.setScene(new Scene(root));
+            stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (Exception e) {
+            e.printStackTrace();
+            messageLabel.setText("Failed to open forgot password dialog!");
+        }
+    }
+
+    @FXML
     private void handleLogin(ActionEvent event) {
         String username = usernameField.getText().trim();
         String password = passwordField.getText().trim();

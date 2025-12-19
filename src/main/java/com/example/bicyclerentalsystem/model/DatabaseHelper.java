@@ -20,7 +20,8 @@ public class DatabaseHelper {
                 CREATE TABLE IF NOT EXISTS users (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     username TEXT UNIQUE NOT NULL,
-                    password TEXT NOT NULL
+                    password TEXT NOT NULL,
+                    hint TEXT
                 );
                 """;
 
@@ -74,6 +75,14 @@ public class DatabaseHelper {
             stmt.execute(rentalsTable);
             stmt.execute(messagesTable);
             
+            // Migration: Add hint column if it doesn't exist
+            try {
+                stmt.execute("ALTER TABLE users ADD COLUMN hint TEXT");
+                System.out.println("Added hint column to users table");
+            } catch (Exception e) {
+                // Column already exists, ignore
+            }
+            
             // Migration: Add rental_days and due_date columns if they don't exist
             try {
                 stmt.execute("ALTER TABLE rentals ADD COLUMN rental_days INTEGER DEFAULT 1");
@@ -113,11 +122,13 @@ public class DatabaseHelper {
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                return new User(
+                User user = new User(
                         rs.getInt("id"),
                         rs.getString("username"),
                         rs.getString("password")
                 );
+                user.setHint(rs.getString("hint"));
+                return user;
             }
 
         } catch (Exception e) {
@@ -130,20 +141,42 @@ public class DatabaseHelper {
     /**
      * Inserts a new user into database.
      */
-    public static void insertUser(String username, String hashedPassword) {
-        String query = "INSERT INTO users(username, password) VALUES(?, ?)";
+    public static void insertUser(String username, String hashedPassword, String hint) {
+        String query = "INSERT INTO users(username, password, hint) VALUES(?, ?, ?)";
 
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
 
             ps.setString(1, username);
             ps.setString(2, hashedPassword);
+            ps.setString(3, hint);
 
             ps.executeUpdate();
             System.out.println("User registered: " + username);
 
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Updates user password.
+     */
+    public static boolean updatePassword(String username, String newHashedPassword) {
+        String query = "UPDATE users SET password = ? WHERE username = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+
+            ps.setString(1, newHashedPassword);
+            ps.setString(2, username);
+
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }

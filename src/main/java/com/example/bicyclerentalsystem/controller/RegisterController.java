@@ -13,15 +13,17 @@ public class RegisterController {
     @FXML private TextField usernameField;
     @FXML private PasswordField passwordField;
     @FXML private PasswordField confirmPasswordField;
+    @FXML private TextField hintField;
     @FXML private Label messageLabel;
 
     @FXML
     private void handleRegister() {
         String username = usernameField.getText().trim();
-        String password = passwordField.getText();
-        String confirmPass = confirmPasswordField.getText();
+        String password = passwordField.getText().trim();
+        String confirmPass = confirmPasswordField.getText().trim();
+        String hint = hintField.getText().trim();
 
-        if (username.isEmpty() || password.isEmpty() || confirmPass.isEmpty()) {
+        if (username.isEmpty() || password.isEmpty() || confirmPass.isEmpty() || hint.isEmpty()) {
             messageLabel.setText("All fields are required!");
             return;
         }
@@ -38,7 +40,7 @@ public class RegisterController {
             }
 
             String hashed = PasswordUtil.hashPassword(password);
-            DatabaseHelper.insertUser(username, hashed);
+            DatabaseHelper.insertUser(username, hashed, hint);
 
             messageLabel.setText("Account created successfully!");
 

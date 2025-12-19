@@ -5,6 +5,7 @@ public class User {
     private int id;
     private String username;
     private String passwordHash; // stored hashed password
+    private String hint; // password hint
 
     public User() {}
 
@@ -43,6 +44,14 @@ public class User {
 
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
+    }
+
+    public String getHint() {
+        return hint;
+    }
+
+    public void setHint(String hint) {
+        this.hint = hint;
     }
 
     // Optional alias to match older controllers

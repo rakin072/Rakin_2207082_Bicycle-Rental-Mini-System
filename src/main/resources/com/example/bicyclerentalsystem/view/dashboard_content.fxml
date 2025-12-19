@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.bicyclerentalsystem.controller.DashboardContentController"
+      spacing="20"
+      stylesheets="@../css/style.css">
+
+    <!-- Dashboard Header -->
+    <Label text="📊 Dashboard Overview" styleClass="title-label"/>
+
+    <!-- Statistics Cards -->
+    <HBox spacing="20" alignment="CENTER_LEFT">
+        <VBox styleClass="card" spacing="10" prefWidth="250">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <Label text="TOTAL BICYCLES" styleClass="card-title"/>
+            <Label fx:id="totalBicyclesLabel" text="0" styleClass="card-value"/>
+        </VBox>
+
+        <VBox styleClass="card" spacing="10" prefWidth="250">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <Label text="AVAILABLE TO RENT" styleClass="card-title"/>
+            <Label fx:id="availableBicyclesLabel" text="0" styleClass="card-value"/>
+        </VBox>
+
+        <VBox styleClass="card" spacing="10" prefWidth="250">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <Label text="CURRENTLY RENTED" styleClass="card-title"/>
+            <Label fx:id="rentedBicyclesLabel" text="0" styleClass="card-value"/>
+        </VBox>
+
+        <VBox styleClass="card" spacing="10" prefWidth="250">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <Label text="TOTAL RENTALS" styleClass="card-title"/>
+            <Label fx:id="totalRentalsLabel" text="0" styleClass="card-value"/>
+        </VBox>
+    </HBox>
+
+    <!-- Tables Row -->
+    <HBox spacing="20" VBox.vgrow="ALWAYS">
+        
+        <!-- Bicycle Models Table -->
+        <VBox styleClass="card" spacing="15" HBox.hgrow="ALWAYS">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            
+            <Label text="My Bicycle Inventory" styleClass="section-header"/>
+            
+            <TableView fx:id="bicycleModelsTable" VBox.vgrow="ALWAYS" styleClass="table-view">
+                <columns>
+                    <TableColumn fx:id="colModel" text="Model" prefWidth="200"/>
+                    <TableColumn fx:id="colType" text="Type" prefWidth="150"/>
+                    <TableColumn fx:id="colCount" text="Count" prefWidth="100"/>
+                </columns>
+            </TableView>
+        </VBox>
+
+        <!-- Recent Rentals Table -->
+        <VBox styleClass="card" spacing="15" HBox.hgrow="ALWAYS">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            
+            <Label text="Recent Rentals" styleClass="section-header"/>
+            
+            <TableView fx:id="recentRentalsTable" VBox.vgrow="ALWAYS" styleClass="table-view">
+                <columns>
+                    <TableColumn fx:id="colRentalBike" text="Bicycle" prefWidth="200"/>
+                    <TableColumn fx:id="colRentDate" text="Rent Date" prefWidth="150"/>
+                    <TableColumn fx:id="colStatus" text="Status" prefWidth="100"/>
+                </columns>
+            </TableView>
+        </VBox>
+        
+    </HBox>
+
+</VBox>
