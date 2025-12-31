@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.bicyclerentalsystem.controller.BicyclesController"
+      spacing="20"
+      stylesheets="@../css/style.css">
+    <padding>
+        <javafx.geometry.Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <Label text="🚴 Manage Your Bicycles" styleClass="title-label"/>
+        <javafx.scene.layout.Pane HBox.hgrow="ALWAYS"/>
+        <Button text="🏠 Back to Dashboard" styleClass="nav-button" onAction="#backToDashboard"
+                prefHeight="35" prefWidth="180"/>
+    </HBox>
+
+    <HBox spacing="15" alignment="CENTER_LEFT">
+        <TextField fx:id="modelField" promptText="Model" styleClass="text-field" 
+                   prefHeight="45" prefWidth="180"/>
+        <ComboBox fx:id="typeComboBox" promptText="Select Type" styleClass="combo-box"
+                  prefHeight="45" prefWidth="180"/>
+        <Button text="➕ Add Bicycle" styleClass="button-primary-large" onAction="#addBicycle"
+                prefHeight="45" prefWidth="150"/>
+    </HBox>
+
+    <TableView fx:id="bicyclesTable" prefHeight="350" styleClass="table-view">
+        <columnResizePolicy><javafx.scene.control.TableView fx:constant="CONSTRAINED_RESIZE_POLICY" /></columnResizePolicy>
+        <columns>
+            <TableColumn text="Model" fx:id="colModel" prefWidth="200"/>
+            <TableColumn text="Type" fx:id="colType" prefWidth="200"/>
+            <TableColumn text="Available" fx:id="colAvailable" prefWidth="150"/>
+        </columns>
+    </TableView>
+
+</VBox>

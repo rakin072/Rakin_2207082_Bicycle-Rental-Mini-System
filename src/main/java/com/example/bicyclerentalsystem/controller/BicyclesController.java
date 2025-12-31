@@ -1,88 +1,132 @@
 package com.example.bicyclerentalsystem.controller;
 
 import com.example.bicyclerentalsystem.model.Bicycle;
+import com.example.bicyclerentalsystem.model.DatabaseHelper;
+import com.example.bicyclerentalsystem.model.UserSession;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 public class BicyclesController {
 
-    @FXML
-    private TableView<Bicycle> bicyclesTable;
+    @FXML private TextField modelField;
+    @FXML private ComboBox<String> typeComboBox;
+    @FXML private TableView<Bicycle> bicyclesTable;
 
-    @FXML
-    private TableColumn<Bicycle, Integer> idColumn;
+    @FXML private TableColumn<Bicycle, String> colModel;
+    @FXML private TableColumn<Bicycle, String> colType;
+    @FXML private TableColumn<Bicycle, Boolean> colAvailable;
 
-    @FXML
-    private TableColumn<Bicycle, String> modelColumn;
-
-    @FXML
-    private TableColumn<Bicycle, String> typeColumn;
-
-    @FXML
-    private TextField modelField;
-
-    @FXML
-    private TextField typeField;
-
-    @FXML
-    private Button addButton;
-
-    @FXML
-    private Button editButton;
-
-    @FXML
-    private Button deleteButton;
-
-    private final ObservableList<Bicycle> bicycleList = FXCollections.observableArrayList();
+    private final ObservableList<Bicycle> list = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
-        // Setup table columns
-        idColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().getId()).asObject());
-        modelColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getModel()));
-        typeColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getType()));
+        // Initialize type dropdown with options
+        typeComboBox.getItems().addAll("electric", "physical");
+        
+        colModel.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getModel()));
+        colType.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getType()));
+        colAvailable.setCellValueFactory(c -> new javafx.beans.property.SimpleBooleanProperty(c.getValue().isAvailable()));
 
-        bicyclesTable.setItems(bicycleList);
-
-        // Example data
-        bicycleList.addAll(
-                new Bicycle(1, "Roadster", "Road Bike"),
-                new Bicycle(2, "Mountain King", "Mountain Bike")
-        );
-
-        // Button actions
-        addButton.setOnAction(e -> addBicycle());
-        editButton.setOnAction(e -> editBicycle());
-        deleteButton.setOnAction(e -> deleteBicycle());
+        bicyclesTable.setItems(list);
+        loadUserBicycles();
     }
 
-    private void addBicycle() {
-        if (!modelField.getText().isEmpty() && !typeField.getText().isEmpty()) {
-            Bicycle b = new Bicycle(modelField.getText(), typeField.getText());
-            b.setId(bicycleList.size() + 1); // Simple ID assignment
-            bicycleList.add(b);
-            modelField.clear();
-            typeField.clear();
+    private void loadUserBicycles() {
+        list.clear();
+
+        int uid = UserSession.getUserId();
+
+        String sql = "SELECT * FROM bicycles WHERE owner_id = ?";
+
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, uid);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+
+                    Bicycle b = new Bicycle();
+                    b.setId(rs.getInt("id"));
+                    b.setModel(rs.getString("model"));
+                    b.setType(rs.getString("type"));
+                    b.setAvailable(rs.getInt("isAvailable") == 1);
+                    b.setOwnerId(uid);
+
+                    list.add(b);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    private void editBicycle() {
-        Bicycle selected = bicyclesTable.getSelectionModel().getSelectedItem();
-        if (selected != null) {
-            selected.setModel(modelField.getText());
-            selected.setType(typeField.getText());
-            bicyclesTable.refresh();
+    @FXML
+    public void addBicycle() {
+
+        String model = modelField.getText().trim();
+        String type = typeComboBox.getValue();
+
+        if (model.isEmpty() || type == null || type.isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Missing Information");
+            alert.setHeaderText(null);
+            alert.setContentText("Please enter a model name and select a type.");
+            alert.showAndWait();
+            return;
+        }
+
+        String sql = "INSERT INTO bicycles(model, type, isAvailable, owner_id) VALUES (?, ?, 1, ?)";
+
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, model);
+            ps.setString(2, type);
+            ps.setInt(3, UserSession.getUserId());
+
+            ps.executeUpdate();
             modelField.clear();
-            typeField.clear();
+            typeComboBox.getSelectionModel().clearSelection();
+            loadUserBicycles();
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    private void deleteBicycle() {
-        Bicycle selected = bicyclesTable.getSelectionModel().getSelectedItem();
-        if (selected != null) {
-            bicycleList.remove(selected);
+    @FXML
+    public void backToDashboard() {
+        try {
+            // Load dashboard content
+            Pane view = FXMLLoader.load(getClass().getResource("/com/example/bicyclerentalsystem/view/dashboard_content.fxml"));
+            
+            // Get the root BorderPane from the scene (dashboard_view.fxml)
+            BorderPane root = (BorderPane) bicyclesTable.getScene().getRoot();
+            
+            // Get the contentPane which is the center of the root
+            Object center = root.getCenter();
+            if (center instanceof BorderPane) {
+                // contentPane is still a BorderPane
+                ((BorderPane) center).setCenter(view);
+            } else {
+                // contentPane was replaced, so set view directly to root's center
+                root.setCenter(view);
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

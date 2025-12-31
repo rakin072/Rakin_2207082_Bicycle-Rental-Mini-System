@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<ScrollPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.example.bicyclerentalsystem.controller.ProfileController"
+            fitToWidth="true"
+            stylesheets="@../css/style.css">
+    
+    <VBox spacing="25" styleClass="content-container">
+        <padding>
+            <Insets top="30" right="40" bottom="30" left="40"/>
+        </padding>
+        
+        <!-- Header -->
+        <HBox alignment="CENTER_LEFT" spacing="20">
+            <Label text="👤 My Profile" styleClass="title-label"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="← Back to Dashboard" onAction="#backToDashboard" styleClass="button-secondary"/>
+        </HBox>
+        
+        <!-- Profile Information Section -->
+        <VBox spacing="20" styleClass="section-box">
+            <Label text="Profile Information" styleClass="section-header"/>
+            
+            <GridPane hgap="20" vgap="15">
+                <columnConstraints>
+                    <ColumnConstraints minWidth="150" prefWidth="150"/>
+                    <ColumnConstraints minWidth="300" prefWidth="400"/>
+                </columnConstraints>
+                
+                <!-- Username -->
+                <Label text="Username:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <TextField fx:id="usernameField" editable="false" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                
+                <!-- Password -->
+                <Label text="New Password:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <PasswordField fx:id="newPasswordField" promptText="Leave blank to keep current password" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                
+                <!-- Confirm Password -->
+                <Label text="Confirm Password:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                <PasswordField fx:id="confirmPasswordField" promptText="Confirm new password" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                
+                <!-- Hint -->
+                <Label text="Password Hint:" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                <TextField fx:id="hintField" promptText="Enter a password hint" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+            </GridPane>
+            
+            <HBox spacing="15">
+                <Button text="💾 Update Profile" onAction="#updateProfile" styleClass="button-primary" prefWidth="150"/>
+                <Button text="🔄 Reset" onAction="#resetForm" styleClass="button-secondary" prefWidth="100"/>
+            </HBox>
+        </VBox>
+        
+        <!-- Statistics Section -->
+        <VBox spacing="20" styleClass="section-box">
+            <Label text="My Statistics" styleClass="section-header"/>
+            
+            <GridPane hgap="30" vgap="20">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="25"/>
+                    <ColumnConstraints percentWidth="25"/>
+                    <ColumnConstraints percentWidth="25"/>
+                    <ColumnConstraints percentWidth="25"/>
+                </columnConstraints>
+                
+                <!-- Stat Cards -->
+                <VBox styleClass="stat-card" spacing="10" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                    <Label text="🚴 My Bicycles" styleClass="stat-label"/>
+                    <Label fx:id="myBicyclesLabel" text="0" styleClass="stat-value"/>
+                </VBox>
+                
+                <VBox styleClass="stat-card" spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                    <Label text="📊 Total Rentals" styleClass="stat-label"/>
+                    <Label fx:id="totalRentalsLabel" text="0" styleClass="stat-value"/>
+                </VBox>
+                
+                <VBox styleClass="stat-card" spacing="10" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                    <Label text="✅ Active Rentals" styleClass="stat-label"/>
+                    <Label fx:id="activeRentalsLabel" text="0" styleClass="stat-value"/>
+                </VBox>
+                
+                <VBox styleClass="stat-card" spacing="10" GridPane.columnIndex="3" GridPane.rowIndex="0">
+                    <Label text="💬 Pending Messages" styleClass="stat-label"/>
+                    <Label fx:id="pendingMessagesLabel" text="0" styleClass="stat-value"/>
+                </VBox>
+            </GridPane>
+        </VBox>
+        
+        <!-- Rental History Summary -->
+        <VBox spacing="20" styleClass="section-box" VBox.vgrow="ALWAYS">
+            <Label text="Rental History Summary" styleClass="section-header"/>
+            
+            <TableView fx:id="rentalHistoryTable" styleClass="table-view" VBox.vgrow="ALWAYS" minHeight="200" maxHeight="Infinity">
+                <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                </columnResizePolicy>
+                <columns>
+                    <TableColumn fx:id="colHistoryBike" text="Bicycle Model"/>
+                    <TableColumn fx:id="colHistoryRentDate" text="Rent Date"/>
+                    <TableColumn fx:id="colHistoryReturnDate" text="Return Date"/>
+                    <TableColumn fx:id="colHistoryDuration" text="Duration (days)"/>
+                    <TableColumn fx:id="colHistoryStatus" text="Status"/>
+                </columns>
+            </TableView>
+        </VBox>
+        
+    </VBox>
+    
+</ScrollPane>
