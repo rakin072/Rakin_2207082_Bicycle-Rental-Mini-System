@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.bicyclerentalsystem.controller.DashboardContentController"
+      spacing="20"
+      stylesheets="@../css/style.css">
+    <padding>
+        <javafx.geometry.Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Label text="Dashboard" styleClass="title-label"/>
+
+    <GridPane hgap="20" vgap="20" prefWidth="600">
+        
+        <!-- Total Bicycles Card -->
+        <VBox styleClass="card" GridPane.columnIndex="0" GridPane.rowIndex="0" spacing="10">
+            <padding>
+                <javafx.geometry.Insets top="15" right="15" bottom="15" left="15"/>
+            </padding>
+            <Label text="Total Bicycles" styleClass="card-title"/>
+            <Label fx:id="totalBicyclesLabel" text="0" styleClass="card-value"/>
+        </VBox>
+
+        <!-- Available Bicycles Card -->
+        <VBox styleClass="card" GridPane.columnIndex="1" GridPane.rowIndex="0" spacing="10">
+            <padding>
+                <javafx.geometry.Insets top="15" right="15" bottom="15" left="15"/>
+            </padding>
+            <Label text="Available" styleClass="card-title"/>
+            <Label fx:id="availableBicyclesLabel" text="0" styleClass="card-value"/>
+        </VBox>
+
+        <!-- Rented Bicycles Card -->
+        <VBox styleClass="card" GridPane.columnIndex="0" GridPane.rowIndex="1" spacing="10">
+            <padding>
+                <javafx.geometry.Insets top="15" right="15" bottom="15" left="15"/>
+            </padding>
+            <Label text="Currently Rented" styleClass="card-title"/>
+            <Label fx:id="rentedBicyclesLabel" text="0" styleClass="card-value"/>
+        </VBox>
+
+        <!-- Total Rentals Card -->
+        <VBox styleClass="card" GridPane.columnIndex="1" GridPane.rowIndex="1" spacing="10">
+            <padding>
+                <javafx.geometry.Insets top="15" right="15" bottom="15" left="15"/>
+            </padding>
+            <Label text="Total Rentals" styleClass="card-title"/>
+            <Label fx:id="totalRentalsLabel" text="0" styleClass="card-value"/>
+        </VBox>
+
+    </GridPane>
+
+    <!-- Bicycle Models Section -->
+    <VBox spacing="10">
+        <Label text="Your Bicycle Models" styleClass="sub-title"/>
+        <TableView fx:id="bicycleModelsTable" prefHeight="200" styleClass="table-view">
+            <columnResizePolicy><javafx.scene.control.TableView fx:constant="CONSTRAINED_RESIZE_POLICY" /></columnResizePolicy>
+            <columns>
+                <TableColumn text="Model" fx:id="colModel" prefWidth="200"/>
+                <TableColumn text="Type" fx:id="colType" prefWidth="150"/>
+                <TableColumn text="Count" fx:id="colCount" prefWidth="100"/>
+            </columns>
+        </TableView>
+    </VBox>
+
+    <!-- Recent Rentals Section -->
+    <VBox spacing="10">
+        <Label text="Recent Rentals" styleClass="sub-title"/>
+        <TableView fx:id="recentRentalsTable" prefHeight="200" styleClass="table-view">
+            <columnResizePolicy><javafx.scene.control.TableView fx:constant="CONSTRAINED_RESIZE_POLICY" /></columnResizePolicy>
+            <columns>
+                <TableColumn text="Bicycle Model" fx:id="colRentalBike" prefWidth="200"/>
+                <TableColumn text="Rent Date" fx:id="colRentDate" prefWidth="150"/>
+                <TableColumn text="Status" fx:id="colStatus" prefWidth="100"/>
+            </columns>
+        </TableView>
+    </VBox>
+
+</VBox>

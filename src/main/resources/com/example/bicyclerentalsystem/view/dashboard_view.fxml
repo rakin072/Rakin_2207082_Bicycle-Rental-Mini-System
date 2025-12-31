@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.example.bicyclerentalsystem.controller.DashboardController"
+            stylesheets="@../css/style.css">
+
+    <top>
+        <HBox styleClass="tool-bar" alignment="CENTER_LEFT" spacing="15">
+            <padding>
+                <javafx.geometry.Insets top="15" right="20" bottom="15" left="20"/>
+            </padding>
+            
+            <!-- Left side buttons -->
+            <HBox spacing="12" alignment="CENTER_LEFT">
+                <Button text="🚴 Bicycles" onAction="#showBicycles" styleClass="nav-button" prefWidth="130" prefHeight="40"/>
+                <Button text="📋 Rentals" onAction="#showRentals" styleClass="nav-button" prefWidth="130" prefHeight="40"/>
+                <Button text="⚠️ Overdue" onAction="#showOverdue" styleClass="nav-button" prefWidth="130" prefHeight="40"/>
+                <StackPane>
+                    <Button text="💬 Messages" onAction="#showMessages" styleClass="nav-button" prefWidth="130" prefHeight="40"/>
+                    <Label fx:id="messageNotificationBadge" styleClass="notification-badge" visible="false" StackPane.alignment="TOP_RIGHT">
+                        <StackPane.margin>
+                            <javafx.geometry.Insets top="5" right="10"/>
+                        </StackPane.margin>
+                    </Label>
+                </StackPane>
+                <Button text="👤 Profile" onAction="#showProfile" styleClass="nav-button" prefWidth="130" prefHeight="40"/>
+            </HBox>
+            
+            <!-- Spacer -->
+            <Pane HBox.hgrow="ALWAYS"/>
+            
+            <!-- Right side logout -->
+            <Button text="🚪 Logout" styleClass="button-danger" onAction="#logout" prefWidth="110" prefHeight="40"/>
+        </HBox>
+    </top>
+
+    <center>
+        <!-- Main content area -->
+        <BorderPane fx:id="contentPane"/>
+    </center>
+
+</BorderPane>
