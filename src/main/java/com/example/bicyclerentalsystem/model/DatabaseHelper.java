@@ -45,6 +45,7 @@ public class DatabaseHelper {
                     return_date TEXT,
                     rental_days INTEGER DEFAULT 1,
                     due_date TEXT,
+                    status TEXT DEFAULT 'active',
                     FOREIGN KEY(user_id) REFERENCES users(id),
                     FOREIGN KEY(bicycle_id) REFERENCES bicycles(id)
                 );
@@ -94,6 +95,14 @@ public class DatabaseHelper {
             try {
                 stmt.execute("ALTER TABLE users ADD COLUMN hint TEXT");
                 System.out.println("Added hint column to users table");
+            } catch (Exception e) {
+                // Column already exists, ignore
+            }
+            
+            // Migration: Add status column to rentals table if it doesn't exist
+            try {
+                stmt.execute("ALTER TABLE rentals ADD COLUMN status TEXT DEFAULT 'active'");
+                System.out.println("Added status column to rentals table");
             } catch (Exception e) {
                 // Column already exists, ignore
             }
