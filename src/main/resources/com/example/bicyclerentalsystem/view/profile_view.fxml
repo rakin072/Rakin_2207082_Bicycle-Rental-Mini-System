@@ -58,12 +58,13 @@
         <VBox spacing="20" styleClass="section-box">
             <Label text="My Statistics" styleClass="section-header"/>
             
-            <GridPane hgap="30" vgap="20">
+            <GridPane hgap="20" vgap="20">
                 <columnConstraints>
-                    <ColumnConstraints percentWidth="25"/>
-                    <ColumnConstraints percentWidth="25"/>
-                    <ColumnConstraints percentWidth="25"/>
-                    <ColumnConstraints percentWidth="25"/>
+                    <ColumnConstraints percentWidth="20"/>
+                    <ColumnConstraints percentWidth="20"/>
+                    <ColumnConstraints percentWidth="20"/>
+                    <ColumnConstraints percentWidth="20"/>
+                    <ColumnConstraints percentWidth="20"/>
                 </columnConstraints>
                 
                 <!-- Stat Cards -->
@@ -85,6 +86,11 @@
                 <VBox styleClass="stat-card" spacing="10" GridPane.columnIndex="3" GridPane.rowIndex="0">
                     <Label text="💬 Pending Messages" styleClass="stat-label"/>
                     <Label fx:id="pendingMessagesLabel" text="0" styleClass="stat-value"/>
+                </VBox>
+                
+                <VBox styleClass="stat-card" spacing="10" GridPane.columnIndex="4" GridPane.rowIndex="0">
+                    <Label text="⚠️ Overdue Charges" styleClass="stat-label"/>
+                    <Label fx:id="overdueChargesLabel" text="0.0 Taka" styleClass="stat-value"/>
                 </VBox>
             </GridPane>
         </VBox>

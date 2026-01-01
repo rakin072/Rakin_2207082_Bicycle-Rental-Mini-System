@@ -58,7 +58,9 @@
             <HBox spacing="12" alignment="CENTER_LEFT">
                 <Button text="📨 Send Message" styleClass="button-primary-large" onAction="#sendMessage"
                         prefHeight="50" prefWidth="200"/>
-                <Label text="Your message will be sent to the bicycle owner"
+                <Button text="💳 Pay Overdue Charges" styleClass="button-secondary" onAction="#sendOverduePayment"
+                        prefHeight="50" prefWidth="200"/>
+                <Label text="Send payment confirmation to bicycle owner or pay overdue charges"
                        style="-fx-text-fill: #94a3b8; -fx-font-size: 13px;"/>
             </HBox>
         </VBox>

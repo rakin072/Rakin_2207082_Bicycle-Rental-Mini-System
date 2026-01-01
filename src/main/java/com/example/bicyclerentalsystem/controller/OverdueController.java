@@ -2,6 +2,7 @@ package com.example.bicyclerentalsystem.controller;
 
 import com.example.bicyclerentalsystem.model.DatabaseHelper;
 import com.example.bicyclerentalsystem.model.Overdue;
+import com.example.bicyclerentalsystem.model.UserSession;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -54,35 +55,40 @@ public class OverdueController {
                 JOIN users ON rentals.user_id = users.id
                 JOIN bicycles ON rentals.bicycle_id = bicycles.id
                 WHERE rentals.return_date IS NULL AND rentals.due_date IS NOT NULL
+                AND rentals.user_id = ?
                 """;
 
         list.clear();
 
         try (Connection conn = DatabaseHelper.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            while (rs.next()) {
+            ps.setInt(1, UserSession.getUserId());
+            
+            try (ResultSet rs = ps.executeQuery()) {
 
-                LocalDate rentDate = LocalDate.parse(rs.getString("rent_date"));
-                LocalDate dueDate = LocalDate.parse(rs.getString("due_date"));
-                LocalDate today = LocalDate.now();
-                
-                // Calculate overdue days only if past due date
-                long overdueDays = java.time.temporal.ChronoUnit.DAYS.between(dueDate, today);
+                while (rs.next()) {
 
-                if (overdueDays > 0) {
-                    list.add(new Overdue(
-                            rs.getInt("rentalId"),
-                            rs.getString("model"),
-                            rs.getString("username"),
-                            rentDate,
-                            overdueDays
-                    ));
+                    LocalDate rentDate = LocalDate.parse(rs.getString("rent_date"));
+                    LocalDate dueDate = LocalDate.parse(rs.getString("due_date"));
+                    LocalDate today = LocalDate.now();
+                    
+                    // Calculate overdue days only if past due date
+                    long overdueDays = java.time.temporal.ChronoUnit.DAYS.between(dueDate, today);
+
+                    if (overdueDays > 0) {
+                        list.add(new Overdue(
+                                rs.getInt("rentalId"),
+                                rs.getString("model"),
+                                rs.getString("username"),
+                                rentDate,
+                                overdueDays
+                        ));
+                    }
                 }
-            }
 
-            overdueTable.setItems(list);
+                overdueTable.setItems(list);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();

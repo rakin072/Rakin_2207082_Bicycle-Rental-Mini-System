@@ -106,6 +106,14 @@ public class DatabaseHelper {
             } catch (Exception e) {
                 // Column already exists, ignore
             }
+            
+            // Migration: Add overdue_charges column to users table if it doesn't exist
+            try {
+                stmt.execute("ALTER TABLE users ADD COLUMN overdue_charges REAL DEFAULT 0.0");
+                System.out.println("Added overdue_charges column to users table");
+            } catch (Exception e) {
+                // Column already exists, ignore
+            }
 
             System.out.println("Database initialized successfully.");
 

@@ -28,6 +28,7 @@ public class ProfileController {
     @FXML private Label totalRentalsLabel;
     @FXML private Label activeRentalsLabel;
     @FXML private Label pendingMessagesLabel;
+    @FXML private Label overdueChargesLabel;
     
     @FXML private TableView<RentalHistory> rentalHistoryTable;
     @FXML private TableColumn<RentalHistory, String> colHistoryBike;
@@ -118,6 +119,22 @@ public class ProfileController {
                 ResultSet rs = ps.executeQuery();
                 if (rs.next()) {
                     pendingMessagesLabel.setText(String.valueOf(rs.getInt("count")));
+                }
+            }
+            
+            // Overdue Charges
+            String overdueChargesSql = "SELECT COALESCE(overdue_charges, 0) as charges FROM users WHERE id = ?";
+            try (PreparedStatement ps = conn.prepareStatement(overdueChargesSql)) {
+                ps.setInt(1, userId);
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    double charges = rs.getDouble("charges");
+                    overdueChargesLabel.setText(String.format("%.2f Taka", charges));
+                    
+                    // Change color if there are charges
+                    if (charges > 0) {
+                        overdueChargesLabel.setStyle("-fx-text-fill: #ff4444;");
+                    }
                 }
             }
             

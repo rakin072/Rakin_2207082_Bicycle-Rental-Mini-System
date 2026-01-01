@@ -146,11 +146,11 @@ public class MessagesController {
         String sql = """
             SELECT m.*, 
                    u_sender.username as sender_name,
-                   b.model as bike_model
+                   COALESCE(b.model, 'Overdue Payment') as bike_model
             FROM messages m
             JOIN users u_sender ON m.sender_id = u_sender.id
-            JOIN rentals r ON m.rental_id = r.id
-            JOIN bicycles b ON r.bicycle_id = b.id
+            LEFT JOIN rentals r ON m.rental_id = r.id
+            LEFT JOIN bicycles b ON r.bicycle_id = b.id
             WHERE m.receiver_id = ? AND m.response IS NULL
             ORDER BY m.sent_at DESC
             """;
@@ -292,6 +292,141 @@ public class MessagesController {
         respondToMessage("No");
     }
     
+    @FXML
+    public void sendOverduePayment() {
+        // Check if user has overdue charges
+        double overdueCharges = getOverdueCharges();
+        
+        if (overdueCharges <= 0) {
+            showAlert("No Overdue Charges", 
+                     "You don't have any overdue charges to pay.", 
+                     Alert.AlertType.INFORMATION);
+            return;
+        }
+        
+        // Validate fields
+        if (txIdField.getText().trim().isEmpty()) {
+            showAlert("Missing Transaction ID", "Please enter a transaction ID for the overdue payment (e.g., TX:12345).", Alert.AlertType.WARNING);
+            txIdField.requestFocus();
+            return;
+        }
+        
+        String txId = txIdField.getText().trim();
+        String message = messageArea.getText().trim();
+        
+        if (message.isEmpty()) {
+            message = "Overdue payment of " + String.format("%.2f", overdueCharges) + " Taka. Transaction ID: " + txId;
+        }
+        
+        try (Connection conn = DatabaseHelper.getConnection()) {
+            // Find the most recent overdue rental to get the bicycle owner
+            String findOwnerSql = """
+                SELECT DISTINCT b.owner_id, u.username as owner_name, b.model as bike_model, r.id as rental_id
+                FROM rentals r
+                JOIN bicycles b ON r.bicycle_id = b.id
+                JOIN users u ON b.owner_id = u.id
+                WHERE r.user_id = ? 
+                AND r.return_date IS NOT NULL 
+                AND r.due_date IS NOT NULL
+                AND r.return_date > r.due_date
+                ORDER BY r.return_date DESC
+                LIMIT 1
+                """;
+            
+            int ownerId = 0;
+            String ownerName = "";
+            String bikeModel = "";
+            int rentalId = 0;
+            
+            try (PreparedStatement ps = conn.prepareStatement(findOwnerSql)) {
+                ps.setInt(1, UserSession.getUserId());
+                ResultSet rs = ps.executeQuery();
+                
+                if (rs.next()) {
+                    ownerId = rs.getInt("owner_id");
+                    ownerName = rs.getString("owner_name");
+                    bikeModel = rs.getString("bike_model");
+                    rentalId = rs.getInt("rental_id");
+                } else {
+                    showAlert("No Overdue Rentals Found", 
+                             "Could not find the bicycle owner for your overdue charges.\n" +
+                             "Please contact support for assistance.", 
+                             Alert.AlertType.ERROR);
+                    return;
+                }
+            }
+            
+            // Show confirmation dialog
+            Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmAlert.setTitle("Confirm Overdue Payment");
+            confirmAlert.setHeaderText("Send Overdue Payment Confirmation");
+            confirmAlert.setContentText("Overdue Amount: " + String.format("%.2f", overdueCharges) + " Taka\n" +
+                                       "Transaction ID: " + txId + "\n" +
+                                       "Bicycle: " + bikeModel + "\n" +
+                                       "Owner: " + ownerName + "\n\n" +
+                                       "This payment confirmation will be sent to the bicycle owner.\n" +
+                                       "Once approved, your overdue charges will be cleared.\n\n" +
+                                       "Continue?");
+            
+            if (confirmAlert.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) {
+                return;
+            }
+            
+            // Insert overdue payment message with the rental_id of the overdue rental
+            String insertSql = "INSERT INTO messages(rental_id, sender_id, receiver_id, transaction_id, message_text, sent_at) VALUES(?, ?, ?, ?, ?, ?)";
+            
+            try (PreparedStatement insertPs = conn.prepareStatement(insertSql)) {
+                insertPs.setInt(1, rentalId); // Use the actual rental_id that caused the overdue
+                insertPs.setInt(2, UserSession.getUserId());
+                insertPs.setInt(3, ownerId); // Send to the bicycle owner
+                insertPs.setString(4, txId);
+                insertPs.setString(5, "[OVERDUE PAYMENT] " + message + " | Amount: " + String.format("%.2f", overdueCharges) + " Taka");
+                insertPs.setString(6, LocalDateTime.now().toString());
+                insertPs.executeUpdate();
+                
+                showAlert("Payment Confirmation Sent! ✅", 
+                         "Your overdue payment confirmation has been sent to " + ownerName + ".\n\n" +
+                         "Amount: " + String.format("%.2f", overdueCharges) + " Taka\n" +
+                         "Transaction ID: " + txId + "\n" +
+                         "Bicycle: " + bikeModel + "\n\n" +
+                         "Once the owner approves your payment, your overdue charges will be cleared and you can rent bicycles again.", 
+                         Alert.AlertType.INFORMATION);
+                
+                // Clear fields
+                txIdField.clear();
+                messageArea.clear();
+                
+                // Reload messages
+                loadSentMessages();
+            }
+            
+        } catch (Exception e) {
+            showAlert("Error", "Failed to send overdue payment confirmation: " + e.getMessage(), Alert.AlertType.ERROR);
+            e.printStackTrace();
+        }
+    }
+    
+    private double getOverdueCharges() {
+        String sql = "SELECT COALESCE(overdue_charges, 0) as charges FROM users WHERE id = ?";
+        
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setInt(1, UserSession.getUserId());
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getDouble("charges");
+                }
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return 0.0;
+    }
+    
     private void respondToMessage(String response) {
         Message selectedMessage = receivedMessagesTable.getSelectionModel().getSelectedItem();
         
@@ -306,10 +441,28 @@ public class MessagesController {
         Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
         confirmAlert.setTitle("Confirm Response");
         confirmAlert.setHeaderText("Send Response to " + selectedMessage.getSenderUsername());
-        confirmAlert.setContentText("Transaction ID: " + selectedMessage.getTransactionId() + "\n" +
-                                   "Bicycle: " + selectedMessage.getBicycleModel() + "\n\n" +
-                                   "Response: " + response + "\n\n" +
-                                   "Are you sure you want to send this response?");
+        
+        // Check if this is an overdue payment message (check message text for "[OVERDUE PAYMENT]")
+        boolean isOverduePayment = selectedMessage.getMessageText() != null && 
+                                   selectedMessage.getMessageText().contains("[OVERDUE PAYMENT]");
+        String contentText;
+        
+        if (isOverduePayment) {
+            contentText = "Transaction ID: " + selectedMessage.getTransactionId() + "\n" +
+                         "Message: " + selectedMessage.getMessageText() + "\n\n" +
+                         "Response: " + response + "\n\n";
+            if (response.equals("Yes")) {
+                contentText += "⚠️ This will CLEAR the sender's overdue charges.\n\n";
+            }
+            contentText += "Are you sure you want to send this response?";
+        } else {
+            contentText = "Transaction ID: " + selectedMessage.getTransactionId() + "\n" +
+                         "Bicycle: " + selectedMessage.getBicycleModel() + "\n\n" +
+                         "Response: " + response + "\n\n" +
+                         "Are you sure you want to send this response?";
+        }
+        
+        confirmAlert.setContentText(contentText);
         
         if (confirmAlert.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) {
             return;
@@ -326,28 +479,38 @@ public class MessagesController {
                 ps.setInt(3, selectedMessage.getId());
                 ps.executeUpdate();
                 
-                // If response is Yes, activate the rental and mark bicycle unavailable
+                // If response is Yes, check if it's an overdue payment or rental approval
                 if (response.equals("Yes")) {
-                    String getBicycleAndUserIdSql = "SELECT bicycle_id, user_id FROM rentals WHERE id = ?";
-                    String checkActiveRentalSql = "SELECT COUNT(*) as count FROM rentals WHERE user_id = ? AND status = 'active' AND return_date IS NULL";
-                    String updateRentalSql = "UPDATE rentals SET status = 'active' WHERE id = ?";
-                    String invalidateThisRentalSql = "UPDATE rentals SET status = 'invalid' WHERE id = ?";
-                    String updateBicycleSql = "UPDATE bicycles SET isAvailable = 0 WHERE id = ?";
-                    String invalidateOtherRequestsSql = "UPDATE rentals SET status = 'invalid' WHERE user_id = ? AND id != ? AND status = 'pending'";
-                    
-                    // Get bicycle ID and user ID from rental
-                    int bicycleId = 0;
-                    int userId = 0;
-                    try (PreparedStatement getBikePs = conn.prepareStatement(getBicycleAndUserIdSql)) {
-                        getBikePs.setInt(1, selectedMessage.getRentalId());
-                        ResultSet rs = getBikePs.executeQuery();
-                        if (rs.next()) {
-                            bicycleId = rs.getInt("bicycle_id");
-                            userId = rs.getInt("user_id");
+                    // Use the isOverduePayment variable already declared above
+                    if (isOverduePayment) {
+                        // This is an overdue payment message - clear the sender's overdue charges
+                        String clearOverdueSql = "UPDATE users SET overdue_charges = 0 WHERE id = (SELECT sender_id FROM messages WHERE id = ?)";
+                        try (PreparedStatement clearPs = conn.prepareStatement(clearOverdueSql)) {
+                            clearPs.setInt(1, selectedMessage.getId());
+                            clearPs.executeUpdate();
                         }
-                    }
-                    
-                    // Check if user already has an active rental
+                    } else {
+                        // This is a regular rental approval - activate the rental
+                        String getBicycleAndUserIdSql = "SELECT bicycle_id, user_id FROM rentals WHERE id = ?";
+                        String checkActiveRentalSql = "SELECT COUNT(*) as count FROM rentals WHERE user_id = ? AND status = 'active' AND return_date IS NULL";
+                        String updateRentalSql = "UPDATE rentals SET status = 'active' WHERE id = ?";
+                        String invalidateThisRentalSql = "UPDATE rentals SET status = 'invalid' WHERE id = ?";
+                        String updateBicycleSql = "UPDATE bicycles SET isAvailable = 0 WHERE id = ?";
+                        String invalidateOtherRequestsSql = "UPDATE rentals SET status = 'invalid' WHERE user_id = ? AND id != ? AND status = 'pending'";
+                        
+                        // Get bicycle ID and user ID from rental
+                        int bicycleId = 0;
+                        int userId = 0;
+                        try (PreparedStatement getBikePs = conn.prepareStatement(getBicycleAndUserIdSql)) {
+                            getBikePs.setInt(1, selectedMessage.getRentalId());
+                            ResultSet rs = getBikePs.executeQuery();
+                            if (rs.next()) {
+                                bicycleId = rs.getInt("bicycle_id");
+                                userId = rs.getInt("user_id");
+                            }
+                        }
+                        
+                        // Check if user already has an active rental
                     boolean hasActiveRental = false;
                     if (userId > 0) {
                         try (PreparedStatement checkPs = conn.prepareStatement(checkActiveRentalSql)) {
@@ -405,12 +568,23 @@ public class MessagesController {
                             }
                         }
                     }
+                    }  // End of else block for rental approval
                 }
                 
                 conn.commit();
                 
                 String icon = response.equals("Yes") ? "✅" : "❌";
-                String additionalMsg = response.equals("Yes") ? "\n\nThe bicycle has been added to the user's rental list." : "";
+                String additionalMsg = "";
+                
+                if (response.equals("Yes")) {
+                    // Use the isOverduePayment variable already declared above
+                    if (isOverduePayment) {
+                        additionalMsg = "\n\nThe user's overdue charges have been cleared and they can now rent bicycles again.";
+                    } else {
+                        additionalMsg = "\n\nThe bicycle has been added to the user's rental list.";
+                    }
+                }
+                
                 showAlert("Response Sent! " + icon, 
                          "Your response has been sent to " + selectedMessage.getSenderUsername() + ".\n\n" +
                          "Response: " + response + "\n" +

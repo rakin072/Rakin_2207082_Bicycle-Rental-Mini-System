@@ -127,6 +127,17 @@ public class RentalsController {
             return;
         }
 
+        // Check if user has unpaid overdue charges
+        double overdueCharges = getOverdueCharges();
+        if (overdueCharges > 0) {
+            showAlert("Unpaid Overdue Charges", 
+                     "You have unpaid overdue charges of " + String.format("%.2f", overdueCharges) + " Taka.\n\n" +
+                     "Please clear your overdue charges before renting a new bicycle.\n" +
+                     "You can pay through the Messages section by sending a payment confirmation with transaction ID.", 
+                     Alert.AlertType.ERROR);
+            return;
+        }
+
         // Check if user already has an active rental
         if (hasActiveRental()) {
             showAlert("Active Rental Exists", 
@@ -219,6 +230,27 @@ public class RentalsController {
         return false;
     }
 
+    private double getOverdueCharges() {
+        String sql = "SELECT COALESCE(overdue_charges, 0) as charges FROM users WHERE id = ?";
+        
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setInt(1, UserSession.getUserId());
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getDouble("charges");
+                }
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return 0.0;
+    }
+
     private void showAlert(String title, String content, Alert.AlertType type) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
@@ -256,26 +288,51 @@ public class RentalsController {
             return;
         }
         
-        // Confirm return
+        LocalDate returnDate = LocalDate.now();
+        LocalDate dueDate = selectedRental.getDueDate();
+        
+        // Calculate overdue amount if return date is past due date
+        long overdueDays = 0;
+        double overdueAmount = 0.0;
+        final double OVERDUE_RATE_PER_DAY = 50.0; // 50 Taka per day
+        
+        if (dueDate != null && returnDate.isAfter(dueDate)) {
+            overdueDays = java.time.temporal.ChronoUnit.DAYS.between(dueDate, returnDate);
+            overdueAmount = overdueDays * OVERDUE_RATE_PER_DAY;
+        }
+        
+        // Confirm return with overdue information
         Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
         confirmAlert.setTitle("Confirm Return");
         confirmAlert.setHeaderText("Return Bicycle #" + selectedRental.getBicycleId());
-        confirmAlert.setContentText("Are you sure you want to return this bicycle?\n\n" +
-                                   "Rent Date: " + selectedRental.getRentDate() + "\n" +
-                                   "Due Date: " + selectedRental.getDueDate() + "\n" +
-                                   "Return Date: " + LocalDate.now());
+        
+        String contentText = "Are you sure you want to return this bicycle?\n\n" +
+                           "Rent Date: " + selectedRental.getRentDate() + "\n" +
+                           "Due Date: " + selectedRental.getDueDate() + "\n" +
+                           "Return Date: " + returnDate;
+        
+        if (overdueDays > 0) {
+            contentText += "\n\n⚠️ OVERDUE CHARGES:\n" +
+                          "Overdue Days: " + overdueDays + " day(s)\n" +
+                          "Overdue Amount: " + overdueAmount + " Taka\n" +
+                          "(Rate: " + OVERDUE_RATE_PER_DAY + " Taka per day)\n\n" +
+                          "This amount will be added to your profile.";
+        }
+        
+        confirmAlert.setContentText(contentText);
         
         if (confirmAlert.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) {
             return;
         }
         
-        LocalDate returnDate = LocalDate.now();
         String updateRentalSql = "UPDATE rentals SET return_date = ? WHERE id = ?";
         String updateBicycleSql = "UPDATE bicycles SET isAvailable = 1 WHERE id = ?";
+        String updateUserOverdueSql = "UPDATE users SET overdue_charges = COALESCE(overdue_charges, 0) + ? WHERE id = ?";
         
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement rentPs = conn.prepareStatement(updateRentalSql);
-             PreparedStatement bikePs = conn.prepareStatement(updateBicycleSql)) {
+             PreparedStatement bikePs = conn.prepareStatement(updateBicycleSql);
+             PreparedStatement userPs = conn.prepareStatement(updateUserOverdueSql)) {
             
             // Update rental with return date
             rentPs.setString(1, returnDate.toString());
@@ -286,17 +343,30 @@ public class RentalsController {
             bikePs.setInt(1, selectedRental.getBicycleId());
             bikePs.executeUpdate();
             
-            showAlert("Success! ✅", 
-                     "Bicycle returned successfully!\n\n" +
-                     "The bicycle is now available for others to rent.", 
-                     Alert.AlertType.INFORMATION);
+            // Update user's overdue charges if applicable
+            if (overdueAmount > 0) {
+                userPs.setDouble(1, overdueAmount);
+                userPs.setInt(2, UserSession.getUserId());
+                userPs.executeUpdate();
+            }
+            
+            String successMessage = "Bicycle returned successfully!\n\n" +
+                                  "The bicycle is now available for others to rent.";
+            
+            if (overdueDays > 0) {
+                successMessage += "\n\n⚠️ Overdue charges of " + overdueAmount + 
+                                " Taka have been added to your profile.\n" +
+                                "Please settle this amount.";
+            }
+            
+            showAlert("Success! ✅", successMessage, Alert.AlertType.INFORMATION);
             
             loadRentals();
             loadAvailableBicycles();
             
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("Error", "Failed to return bicycle. Please try again.", Alert.AlertType.ERROR);
+            showAlert("Error", "Failed to return bicycle. Please try again.\n\nError: " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
     

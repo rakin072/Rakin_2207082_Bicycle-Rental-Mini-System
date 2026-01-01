@@ -6,6 +6,7 @@ public class User {
     private String username;
     private String passwordHash; // stored hashed password
     private String hint; // password recovery hint
+    private double overdueCharges; // accumulated overdue charges
 
     public User() {}
 
@@ -14,12 +15,22 @@ public class User {
         this.username = username;
         this.passwordHash = passwordHash;
         this.hint = hint;
+        this.overdueCharges = 0.0;
+    }
+    
+    public User(int id, String username, String passwordHash, String hint, double overdueCharges) {
+        this.id = id;
+        this.username = username;
+        this.passwordHash = passwordHash;
+        this.hint = hint;
+        this.overdueCharges = overdueCharges;
     }
 
     public User(String username, String passwordHash, String hint) {
         this.username = username;
         this.passwordHash = passwordHash;
         this.hint = hint;
+        this.overdueCharges = 0.0;
     }
 
     // Keep old constructors for backward compatibility
@@ -63,6 +74,14 @@ public class User {
 
     public void setHint(String hint) {
         this.hint = hint;
+    }
+    
+    public double getOverdueCharges() {
+        return overdueCharges;
+    }
+    
+    public void setOverdueCharges(double overdueCharges) {
+        this.overdueCharges = overdueCharges;
     }
 
     // Optional alias to match older controllers
