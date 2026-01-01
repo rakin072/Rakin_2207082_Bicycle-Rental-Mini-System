@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.bicyclerentalsystem.controller.OverdueController"
+      spacing="20"
+      stylesheets="@../css/style.css">
+    <padding>
+        <javafx.geometry.Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <Label text="⚠️ Overdue Rentals" styleClass="title-label"/>
+        <javafx.scene.layout.Pane HBox.hgrow="ALWAYS"/>
+        <Button text="🏠 Back to Dashboard" styleClass="nav-button" onAction="#backToDashboard"
+                prefHeight="35" prefWidth="180"/>
+    </HBox>
+
+    <Label fx:id="overdueInfoLabel" text="⚠️ Overdue Rate: 50 Taka per day" 
+           style="-fx-text-fill: #ef4444; -fx-font-size: 15px; -fx-font-weight: 700; -fx-padding: 10 0 0 0;"/>
+
+    <TableView fx:id="overdueTable" prefHeight="400" styleClass="table-view">
+        <columnResizePolicy><javafx.scene.control.TableView fx:constant="CONSTRAINED_RESIZE_POLICY" /></columnResizePolicy>
+        <columns>
+            <TableColumn text="User" fx:id="colUser" prefWidth="140"/>
+            <TableColumn text="Bicycle" fx:id="colBike" prefWidth="140"/>
+            <TableColumn text="Rent Date" fx:id="colRentDate" prefWidth="130"/>
+            <TableColumn text="Overdue Days" fx:id="colDays" prefWidth="110"/>
+            <TableColumn text="Overdue Amount (Tk)" fx:id="colAmount" prefWidth="150"/>
+        </columns>
+    </TableView>
+
+</VBox>

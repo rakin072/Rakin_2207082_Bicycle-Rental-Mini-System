@@ -5,63 +5,42 @@ import java.time.LocalDate;
 public class Rental {
 
     private int id;
-    private String customerName;
-    private String bicycleModel;
-    private LocalDate rentalDate;
+    private int userId;
+    private int bicycleId;
+    private LocalDate rentDate;
     private LocalDate returnDate;
+    private int rentalDays;
+    private LocalDate dueDate;
 
-    public Rental(int id, String customerName, String bicycleModel, LocalDate rentalDate, LocalDate returnDate) {
+    public Rental() {}
+
+    public Rental(int id, int userId, int bicycleId, LocalDate rentDate, LocalDate returnDate) {
         this.id = id;
-        this.customerName = customerName;
-        this.bicycleModel = bicycleModel;
-        this.rentalDate = rentalDate;
+        this.userId = userId;
+        this.bicycleId = bicycleId;
+        this.rentDate = rentDate;
         this.returnDate = returnDate;
     }
 
-    public Rental(String customerName, String bicycleModel, LocalDate rentalDate, LocalDate returnDate) {
-        this.customerName = customerName;
-        this.bicycleModel = bicycleModel;
-        this.rentalDate = rentalDate;
-        this.returnDate = returnDate;
+    public Rental(int userId, int bicycleId, LocalDate rentDate) {
+        this.userId = userId;
+        this.bicycleId = bicycleId;
+        this.rentDate = rentDate;
     }
 
-    public int getId() {
-        return id;
-    }
+    public int getId() { return id; }
+    public int getUserId() { return userId; }
+    public int getBicycleId() { return bicycleId; }
+    public LocalDate getRentDate() { return rentDate; }
+    public LocalDate getReturnDate() { return returnDate; }
+    public int getRentalDays() { return rentalDays; }
+    public LocalDate getDueDate() { return dueDate; }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getCustomerName() {
-        return customerName;
-    }
-
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
-    }
-
-    public String getBicycleModel() {
-        return bicycleModel;
-    }
-
-    public void setBicycleModel(String bicycleModel) {
-        this.bicycleModel = bicycleModel;
-    }
-
-    public LocalDate getRentalDate() {
-        return rentalDate;
-    }
-
-    public void setRentalDate(LocalDate rentalDate) {
-        this.rentalDate = rentalDate;
-    }
-
-    public LocalDate getReturnDate() {
-        return returnDate;
-    }
-
-    public void setReturnDate(LocalDate returnDate) {
-        this.returnDate = returnDate;
-    }
+    public void setId(int id) { this.id = id; }
+    public void setUserId(int userId) { this.userId = userId; }
+    public void setBicycleId(int bicycleId) { this.bicycleId = bicycleId; }
+    public void setRentDate(LocalDate rentDate) { this.rentDate = rentDate; }
+    public void setReturnDate(LocalDate returnDate) { this.returnDate = returnDate; }
+    public void setRentalDays(int rentalDays) { this.rentalDays = rentalDays; }
+    public void setDueDate(LocalDate dueDate) { this.dueDate = dueDate; }
 }

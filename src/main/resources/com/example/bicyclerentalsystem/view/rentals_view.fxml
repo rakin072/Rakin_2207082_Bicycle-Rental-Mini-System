@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.bicyclerentalsystem.controller.RentalsController"
+      spacing="20"
+      stylesheets="@../css/style.css">
+    <padding>
+        <javafx.geometry.Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <Label text="📋 Bicycle Rentals" styleClass="title-label"/>
+        <javafx.scene.layout.Pane HBox.hgrow="ALWAYS"/>
+        <Button text="🏠 Back to Dashboard" styleClass="nav-button" onAction="#backToDashboard"
+                prefHeight="35" prefWidth="180"/>
+    </HBox>
+
+    <VBox spacing="15">
+        <Label text="📋 Rent a Bicycle" style="-fx-font-size: 16px; -fx-font-weight: 700; -fx-text-fill: #10b981;"/>
+        <HBox spacing="15" alignment="CENTER_LEFT">
+            <VBox spacing="8">
+                <Label text="Select Bicycle:" style="-fx-font-weight: 600;"/>
+                <ComboBox fx:id="bicycleDropdown" promptText="Choose a bicycle..." styleClass="combo-box" 
+                          prefWidth="280" prefHeight="45"/>
+            </VBox>
+            <VBox spacing="8">
+                <Label text="Rental Duration (Days):" style="-fx-font-weight: 600;"/>
+                <Spinner fx:id="durationSpinner" prefWidth="120" prefHeight="45" styleClass="spinner"/>
+            </VBox>
+            <VBox spacing="8">
+                <Label text=" " style="-fx-font-weight: 600;"/>
+                <Button text="🚲 Rent Now" styleClass="button-primary-large" onAction="#rentBicycle"
+                        prefHeight="45" prefWidth="160"/>
+            </VBox>
+        </HBox>
+        <Label text="💵 Overdue Rate: 50 Taka per day after due date" 
+               style="-fx-text-fill: #f59e0b; -fx-font-size: 13px; -fx-font-weight: 600;"/>
+    </VBox>
+
+    <VBox spacing="10">
+        <Label text="📋 Your Rental History" style="-fx-font-size: 16px; -fx-font-weight: 700; -fx-text-fill: #3b82f6;"/>
+        <TableView fx:id="rentalsTable" prefHeight="350" styleClass="table-view">
+            <columnResizePolicy><javafx.scene.control.TableView fx:constant="CONSTRAINED_RESIZE_POLICY" /></columnResizePolicy>
+            <columns>
+                <TableColumn text="Bicycle" fx:id="colBike" prefWidth="150"/>
+                <TableColumn text="Rented On" fx:id="colRentDate" prefWidth="120"/>
+                <TableColumn text="Duration (Days)" fx:id="colDuration" prefWidth="110"/>
+                <TableColumn text="Due Date" fx:id="colDueDate" prefWidth="120"/>
+                <TableColumn text="Status" fx:id="colStatus" prefWidth="100"/>
+            </columns>
+        </TableView>
+        <HBox spacing="15" alignment="CENTER_LEFT">
+            <Button text="🔄 Return Selected Bicycle" styleClass="button-primary-large" onAction="#returnBicycle"
+                    prefHeight="45" prefWidth="220"/>
+            <Label text="Select a rental from the table above to return" 
+                   style="-fx-text-fill: #94a3b8; -fx-font-size: 13px; -fx-font-style: italic;"/>
+        </HBox>
+    </VBox>
+
+</VBox>

@@ -1,34 +1,32 @@
 package com.example.bicyclerentalsystem.model;
 
+import java.time.LocalDate;
+
 public class Overdue {
 
     private int rentalId;
-    private String customerName;
-    private String bicycle;
-    private String dueDate;
-    private int daysOverdue;
-    private double overdueFee;
+    private String bicycleModel;
+    private String username;
+    private LocalDate rentDate;
+    private long overdueDays;
+    private double overdueAmount;
+    private static final double OVERDUE_RATE_PER_DAY = 50.0; // 50 taka per day
 
-    public Overdue(int rentalId, String customerName, String bicycle, String dueDate, int daysOverdue, double overdueFee) {
+    public Overdue(int rentalId, String bicycleModel, String username,
+                   LocalDate rentDate, long overdueDays) {
         this.rentalId = rentalId;
-        this.customerName = customerName;
-        this.bicycle = bicycle;
-        this.dueDate = dueDate;
-        this.daysOverdue = daysOverdue;
-        this.overdueFee = overdueFee;
+        this.bicycleModel = bicycleModel;
+        this.username = username;
+        this.rentDate = rentDate;
+        this.overdueDays = overdueDays;
+        this.overdueAmount = overdueDays * OVERDUE_RATE_PER_DAY;
     }
 
     public int getRentalId() { return rentalId; }
-    public String getCustomerName() { return customerName; }
-    public String getBicycle() { return bicycle; }
-    public String getDueDate() { return dueDate; }
-    public int getDaysOverdue() { return daysOverdue; }
-    public double getOverdueFee() { return overdueFee; }
-
-    public void setRentalId(int rentalId) { this.rentalId = rentalId; }
-    public void setCustomerName(String customerName) { this.customerName = customerName; }
-    public void setBicycle(String bicycle) { this.bicycle = bicycle; }
-    public void setDueDate(String dueDate) { this.dueDate = dueDate; }
-    public void setDaysOverdue(int daysOverdue) { this.daysOverdue = daysOverdue; }
-    public void setOverdueFee(double overdueFee) { this.overdueFee = overdueFee; }
+    public String getBicycleModel() { return bicycleModel; }
+    public String getUsername() { return username; }
+    public LocalDate getRentDate() { return rentDate; }
+    public long getOverdueDays() { return overdueDays; }
+    public double getOverdueAmount() { return overdueAmount; }
+    public static double getOverdueRatePerDay() { return OVERDUE_RATE_PER_DAY; }
 }
